@@ -10,6 +10,10 @@
 
 #include <stddef.h>
 
+#define STM32F4
+#define SSD1306_USE_I2C
+#define SSD1306_I2C_PORT hi2c1
+
 #if defined(STM32F1)
 #include "stm32f1xx_hal.h"
 #elif defined(STM32F4)
@@ -98,20 +102,28 @@ typedef struct {
     uint16_t CurrentY;
     uint8_t Inverted;
     uint8_t Initialized;
+    #if defined(SSD1306_USE_I2C)
+    I2C_HandleTypeDef *hi2cx;
+    #endif
+    #if defined(SSD1306_USE_SPI)
+    SPI_HandleTypeDef *hspix;
+    #endif
+    uint8_t pixels[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
+    uint8_t address;
 } SSD1306_t;
 
 // Procedure definitions
-void ssd1306_Init(void);
-void ssd1306_Fill(SSD1306_COLOR color);
-void ssd1306_UpdateScreen(void);
-void ssd1306_DrawPixel(uint8_t x, uint8_t y, SSD1306_COLOR color);
-char ssd1306_WriteChar(char ch, FontDef Font, SSD1306_COLOR color);
-char ssd1306_WriteString(char* str, FontDef Font, SSD1306_COLOR color);
-void ssd1306_SetCursor(uint8_t x, uint8_t y);
+void ssd1306_Init(SSD1306_t *ssd);
+void ssd1306_Fill(SSD1306_t *ssd, SSD1306_COLOR color);
+void ssd1306_UpdateScreen(SSD1306_t *ssd);
+void ssd1306_DrawPixel(SSD1306_t *ssd, uint8_t x, uint8_t y, SSD1306_COLOR color);
+char ssd1306_WriteChar(SSD1306_t *ssd, char ch, FontDef Font, SSD1306_COLOR color);
+char ssd1306_WriteString(SSD1306_t *ssd, char* str, FontDef Font, SSD1306_COLOR color);
+void ssd1306_SetCursor(SSD1306_t *ssd, uint8_t x, uint8_t y);
 
 // Low-level procedures
-void ssd1306_Reset(void);
-void ssd1306_WriteCommand(uint8_t byte);
-void ssd1306_WriteData(uint8_t* buffer, size_t buff_size);
+void ssd1306_Reset(SSD1306_t *ssd);
+void ssd1306_WriteCommand(SSD1306_t *ssd, uint8_t byte);
+void ssd1306_WriteData(SSD1306_t *ssd, uint8_t* buffer, size_t buff_size);
 
 #endif // __SSD1306_H__

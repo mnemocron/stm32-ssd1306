@@ -1,5 +1,27 @@
 # stm32-ssd1306
 
+This library was adapted to support multiple Displays on multiple I2C Busses. 
+See the example for further details.
+
+```c
+SSD1306_t holed1;
+holed1.hi2cx = &hi2c1;
+ssd1306_Init(&holed1);
+ssd1306_Fill(&holed1, Black);
+ssd1306_SetCursor(&holed1, 2, 0);
+ssd1306_WriteString(&holed1, "Hello,", Font_11x18, White);
+ssd1306_UpdateScreen(&holed1);
+
+```
+
+
+Currently missing is the implementaion to use multiple displays on SPI Bus.
+
+
+---
+
+### original Readme:
+
 STM32 library for working with OLEDs based on SSD1306, SH1106 and SSD1309,
 supports I2C and 4-wire SPI.
 
